@@ -74,7 +74,6 @@ for cal in gc.get_calendar_list():
             for event in gc.get_events(calendar_id=calendar_id):
                 if event.summary == args.add_name && \
                    event.start == datetime.fromisoformat(args.add_date_time):
-                    print(event.summary)
                     event_id = event.id
 
 calendar = Calendar(
@@ -109,3 +108,8 @@ elif args.add or args.delete:
         print("Deleted event from calendar")
     else:
         print("Nothing to delete")
+        sys.exit(2)
+else:
+    sys.exit(3)
+sys.exit(0)
+
