@@ -1,0 +1,26 @@
+diff --git a/gcsa/_services/authentication.py b/gcsa/_services/authentication.py
+index c94e2cc..a49265f 100644
+--- a/gcsa/_services/authentication.py
++++ b/gcsa/_services/authentication.py
+@@ -23,7 +23,7 @@ class AuthenticatedService:
+             save_token: bool = True,
+             read_only: bool = False,
+             authentication_flow_host: str = 'localhost',
+-            authentication_flow_port: int = 8080
++            authentication_flow_port: int = 8085
+     ):
+         """
+         Specify ``credentials`` to use in requests or ``credentials_path`` and ``token_path`` to get credentials from.
+diff --git a/gcsa/google_calendar.py b/gcsa/google_calendar.py
+index eeca51c..da78e63 100644
+--- a/gcsa/google_calendar.py
++++ b/gcsa/google_calendar.py
+@@ -30,7 +30,7 @@ class GoogleCalendar(
+             save_token: bool = True,
+             read_only: bool = False,
+             authentication_flow_host: str = 'localhost',
+-            authentication_flow_port: int = 8080
++            authentication_flow_port: int = 8085
+     ):
+         """
+         Specify ``credentials`` to use in requests or ``credentials_path`` and ``token_path`` to get credentials from.
