@@ -72,7 +72,7 @@ for cal in gc.get_calendar_list():
         calendar_id = cal.calendar_id
         if args.add or args.delete:
             for event in gc.get_events(calendar_id=calendar_id):
-                if event.summary == args.add_name && \
+                if event.summary == args.add_name and \
                    event.start == datetime.fromisoformat(args.add_date_time):
                     event_id = event.id
 
