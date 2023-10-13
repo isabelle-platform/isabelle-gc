@@ -69,12 +69,16 @@ calendar_id = None
 event_id = None
 for cal in gc.get_calendar_list():
     if cal.summary == args.calendar:
+        print("Found calendar")
         calendar_id = cal.calendar_id
         if args.add or args.delete:
             for event in gc.get_events(calendar_id=calendar_id):
-                if event.summary == args.add_name and \
-                   event.start == datetime.fromisoformat(args.add_date_time):
-                    event_id = event.id
+                if event.summary != None:
+                    print("Event summary: " + event.summary + " vs " + args.add_name)
+                    print("Event start: " + str(event.start) + " vs " + str(datetime.fromisoformat(args.add_date_time)))
+                    if event.summary == args.add_name and \
+                       str(event.start).startswith(str(datetime.fromisoformat(args.add_date_time))):
+                        event_id = event.id
 
 calendar = Calendar(
     args.calendar,
