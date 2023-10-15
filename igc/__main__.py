@@ -65,8 +65,14 @@ def prepare_parser():
     parser.add_argument("-flow-backlink", "--flow-backlink",
                         help="OAuth flow backlink",
                         default="http://localhost:8081/setting/gcal_auth")
-    parser.add_argument("-flow-token", "--flow-token",
-                        help="OAuth flow token",
+    parser.add_argument("-flow-code", "--flow-code",
+                        help="OAuth flow code",
+                        default="")
+    parser.add_argument("-flow-state", "--flow-state",
+                        help="OAuth flow state",
+                        default="")
+    parser.add_argument("-flow-complete-url", "--flow-complete-url",
+                        help="OAuth flow complete url",
                         default="")
 
     # Initialize calendar
@@ -102,15 +108,14 @@ if args.flow_start:
     scopes = [ 'https://www.googleapis.com/auth/calendar' ]
     flow = InstalledAppFlow.from_client_secrets_file(
         args.credentials,
-        scopes)
+        scopes=scopes,
+        redirect_uri=args.flow_backlink)
+
     f = open(args.flow_url, "w")
     auth_url, _ = flow.authorization_url(prompt='consent');
-    print(auth_url + "&redirect_uri=" + args.flow_backlink, file=f)
+    print(auth_url, file=f)
     f.close()
 
-    #credentials = flow.run_local_server(host="localhost", port=8086, open_browser=False)
-    #with open(args.pickle, 'wb') as token_file:
-    #    pickle.dump(credentials, token_file)
     sys.exit(0)
 
 if args.flow_end:
@@ -119,9 +124,11 @@ if args.flow_end:
     scopes = [ 'https://www.googleapis.com/auth/calendar' ]
     flow = InstalledAppFlow.from_client_secrets_file(
         args.credentials,
-        scopes)
+        scopes,
+        redirect_uri=args.flow_backlink)
+    flow._state = args.flow_state;
 
-    flow.fetch_token(authorization_response=args.flow_token)
+    flow.fetch_token(authorization_response=args.flow_complete_url)
     with open(args.pickle, 'wb') as token_file:
         pickle.dump(flow.credentials, token_file)
     sys.exit(0)
