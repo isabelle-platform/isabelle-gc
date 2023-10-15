@@ -4,6 +4,19 @@ Isabelle Google Calendar Connector
 """
 import argparse
 import sys
+import pickle
+import os.path
+import os
+from typing import List
+
+from googleapiclient import discovery
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+
+
+sys.path.insert(0, "/Users/mmenshikov/src/isabelle/isabelle-core/isabelle-gc/google-calendar-simple-api")
+
 from gcsa.google_calendar import GoogleCalendar
 from gcsa.calendar import Calendar
 from gcsa.event import Event
@@ -28,6 +41,9 @@ def prepare_parser():
     parser.add_argument("-creds", "--credentials",
                         help="Path to credenetials",
                         default="credentials.json")
+    parser.add_argument("-pickle", "--pickle",
+                        help="Path to pickle",
+                        default="token.pickle")
 
     parser.add_argument("-c", "--calendar",
                         help="Calendar name",
@@ -35,6 +51,23 @@ def prepare_parser():
     parser.add_argument("-d", "--calendar-desc",
                         help="Calendar description",
                         default="Container for Isabelle events")
+
+    # Start/end flow
+    parser.add_argument("-flow-start", "--flow-start",
+                        help="Start OAuth flow",
+                        action='store_true')
+    parser.add_argument("-flow-end", "--flow-end",
+                        help="End OAuth flow",
+                        action='store_true')
+    parser.add_argument("-flow-url", "--flow-url",
+                        help="OAuth flow url",
+                        default="flow.url")
+    parser.add_argument("-flow-backlink", "--flow-backlink",
+                        help="OAuth flow backlink",
+                        default="http://localhost:8081/setting/gcal_auth")
+    parser.add_argument("-flow-token", "--flow-token",
+                        help="OAuth flow token",
+                        default="")
 
     # Initialize calendar
     parser.add_argument("-init", "--init",
@@ -62,6 +95,35 @@ def prepare_parser():
 
 parser = prepare_parser();
 args = parser.parse_args()
+
+if args.flow_start:
+    if os.path.exists(args.flow_url):
+        os.remove(args.flow_url)
+    scopes = [ 'https://www.googleapis.com/auth/calendar' ]
+    flow = InstalledAppFlow.from_client_secrets_file(
+        args.credentials,
+        scopes)
+    f = open(args.flow_url, "w")
+    auth_url, _ = flow.authorization_url(prompt='consent');
+    print(auth_url + "&redirect_uri=" + args.flow_backlink, file=f)
+    f.close()
+
+    #credentials = flow.run_local_server(host="localhost", port=8086, open_browser=False)
+    with open(args.pickle, 'wb') as token_file:
+        pickle.dump(credentials, token_file)
+    sys.exit(0)
+
+if args.flow_end:
+    if os.path.exists(args.flow_url):
+        os.remove(args.flow_url)
+    scopes = [ 'https://www.googleapis.com/auth/calendar' ]
+    flow = InstalledAppFlow.from_client_secrets_file(
+        args.credentials,
+        scopes)
+    flow.fetch_token(authorization_response=args.flow_token)
+    with open(args.pickle, 'wb') as token_file:
+        pickle.dump(flow.credentials, token_file)
+    sys.exit(0)
 
 gc = GoogleCalendar(args.email, credentials_path=args.credentials)
 
