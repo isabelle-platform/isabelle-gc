@@ -109,8 +109,8 @@ if args.flow_start:
     f.close()
 
     #credentials = flow.run_local_server(host="localhost", port=8086, open_browser=False)
-    with open(args.pickle, 'wb') as token_file:
-        pickle.dump(credentials, token_file)
+    #with open(args.pickle, 'wb') as token_file:
+    #    pickle.dump(credentials, token_file)
     sys.exit(0)
 
 if args.flow_end:
@@ -120,6 +120,7 @@ if args.flow_end:
     flow = InstalledAppFlow.from_client_secrets_file(
         args.credentials,
         scopes)
+
     flow.fetch_token(authorization_response=args.flow_token)
     with open(args.pickle, 'wb') as token_file:
         pickle.dump(flow.credentials, token_file)
