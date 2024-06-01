@@ -14,9 +14,6 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 
-
-sys.path.insert(0, "/Users/mmenshikov/src/isabelle/isabelle-core/isabelle-gc/google-calendar-simple-api")
-
 from gcsa.google_calendar import GoogleCalendar
 from gcsa.calendar import Calendar
 from gcsa.event import Event
